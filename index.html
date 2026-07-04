@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<!--
+  GitHub Pages — landing asset (ork.ad style)
+  Édite ce fichier, puis regénère :
+    .venv/bin/python3 -m pipeline.github.pages --dev
+    .venv/bin/python3 -m pipeline.github.pages --preview EURUSD
+
+  Placeholders {{NAME}} — remplis par pipeline/pages_builder.py
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080808">
+  <title>USDCAD 1w OHLCV Forex Historical Data — Free Sample</title>
+  <meta name="description" content="USDCAD 1w OHLCV Forex — free sample candlestick chart. Full historical data on ork.ad.">
+  <link rel="canonical" href="https://ork-ad.github.io/usdcad-1w-ohlcv-forex-historical-data/">
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+  <style>
+    :root {
+      --accent:       #c8cdd3;
+      --accent-hi:    #e8eaed;
+      --accent-dim:   rgba(200, 205, 211, 0.14);
+      --accent-border:rgba(200, 205, 211, 0.38);
+
+      --bg-0:  #080808;
+      --bg-1:  #0e0e0e;
+      --bg-2:  #141414;
+      --bg-3:  #1a1a1a;
+
+      --line-0: rgba(255,255,255,0.06);
+      --line-1: rgba(255,255,255,0.10);
+      --line-2: rgba(255,255,255,0.16);
+
+      --silver-ring: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.38) 0%,
+        rgba(200, 205, 211, 0.26) 24%,
+        rgba(90, 98, 110, 0.16) 50%,
+        rgba(200, 205, 211, 0.3) 76%,
+        rgba(255, 255, 255, 0.22) 100%
+      );
+      --surface-ring-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 28px 56px -16px rgba(0, 0, 0, 0.72),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+      --text-hi:  #f2f2f2;
+      --text-mid: rgba(242,242,242,0.65);
+      --text-lo:  rgba(242,242,242,0.38);
+
+      --font-sans: 'Clash Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-display: 'Clash Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'SFMono-Regular', 'Fira Code', ui-monospace, monospace;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+
+      --up: #00c853;
+      --down: #ff1744;
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    html, body { min-height: 100%; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-0);
+      color: var(--text-hi);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    ::selection { background: var(--accent); color: #080808; }
+
+    a { color: var(--accent); text-decoration: none; transition: color 0.18s var(--ease-out); }
+    a:hover { color: var(--accent-hi); }
+
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(200, 205, 211, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 80% 60%, rgba(200, 205, 211, 0.04) 0%, transparent 50%),
+        var(--bg-0);
+    }
+
+    .page-bg::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 140%; height: 140%;
+      min-width: 900px; min-height: 900px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(200,205,211,0.12) 0%,
+        transparent 6%,
+        transparent 62%,
+        rgba(200,205,211,0.03) 78%,
+        rgba(200,205,211,0.08) 94%,
+        rgba(200,205,211,0.12) 100%
+      );
+      animation: bg-spin 18s linear infinite;
+      filter: blur(2px);
+      opacity: 0.6;
+    }
+
+    @keyframes bg-spin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .page-bg::before { animation: none; }
+      .hero { animation: none; }
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 clamp(1.25rem, 4vw, 2.5rem) 3rem;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 0 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.125rem;
+      letter-spacing: -0.02em;
+      color: var(--text-hi);
+      text-transform: lowercase;
+    }
+
+    .brand span {
+      color: var(--text-lo);
+      font-weight: 500;
+      margin-left: 0.15rem;
+    }
+
+    .topbar-links {
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+
+    .topbar-links a { color: var(--text-mid); }
+    .topbar-links a:hover { color: var(--accent); }
+
+    .hero {
+      margin-bottom: 2rem;
+      animation: hero-enter 0.75s var(--ease-out) both;
+    }
+
+    @keyframes hero-enter {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line-1);
+      font-family: var(--font-display);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .pill.sym {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-color: var(--accent-border);
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+      margin: 0 0 0.75rem;
+      max-width: 22ch;
+      background: linear-gradient(180deg, #ffffff 15%, #c8cdd3 55%, #8f96a3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      color: var(--text-mid);
+      max-width: 62ch;
+      margin: 0;
+      font-size: clamp(0.9rem, 1.4vw, 1.02rem);
+      line-height: 1.65;
+    }
+
+    .lead strong { color: var(--text-hi); font-weight: 600; }
+
+    .update-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-mid);
+    }
+
+    .update-badge::before {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--up);
+      box-shadow: 0 0 8px rgba(0, 200, 83, 0.5);
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      height: 40px;
+      padding: 0 1.15rem;
+      border-radius: 9999px;
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 0.8125rem;
+      border: 1px solid transparent;
+      transition: all 0.18s var(--ease-out);
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, var(--accent-hi) 0%, var(--accent) 100%);
+      color: #0a0a0a;
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(180deg, #ffffff 0%, #d1d5db 100%);
+      color: #0a0a0a;
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(200, 205, 211, 0.22);
+    }
+
+    .btn-ghost {
+      background: rgba(8, 8, 8, 0.35);
+      color: var(--text-hi);
+      border: 1px solid var(--accent-border);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 8px 20px -12px rgba(0, 0, 0, 0.45);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.96);
+      color: #000;
+      border-color: rgba(255, 255, 255, 0.85);
+      transform: translateY(-1px);
+    }
+
+    .stats {
+      display: grid;
+      gap: 1px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      margin: 2rem 0;
+      border: 1px solid var(--line-0);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--line-0);
+    }
+
+    .stat {
+      background: var(--bg-1);
+      padding: 1.1rem 1.15rem;
+      transition: background 0.18s var(--ease-out);
+    }
+
+    .stat:hover { background: var(--bg-2); }
+
+    .stat label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-hi);
+    }
+
+    .stat small {
+      display: block;
+      color: var(--text-lo);
+      font-size: 0.75rem;
+      margin-top: 0.2rem;
+    }
+
+    .panel-wrap {
+      position: relative;
+      padding: 1px;
+      border-radius: var(--radius-lg);
+      background: var(--silver-ring);
+      box-shadow: var(--surface-ring-shadow);
+      margin-bottom: 1.5rem;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .panel-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: calc(var(--radius-lg) - 1px);
+      pointer-events: none;
+      z-index: 2;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+    }
+
+    .panel {
+      position: relative;
+      z-index: 1;
+      background: rgba(8, 8, 8, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: calc(var(--radius-lg) - 1px);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.85rem 1.15rem;
+      border-bottom: 1px solid rgba(200, 205, 211, 0.1);
+      background: rgba(8, 8, 8, 0.55);
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-hi);
+      letter-spacing: -0.01em;
+    }
+
+    .panel-head .sub {
+      color: var(--text-lo);
+      font-size: 0.75rem;
+      margin-top: 0.15rem;
+    }
+
+    .ohlc-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 0.5rem 1.15rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      border-bottom: 1px solid rgba(200, 205, 211, 0.1);
+      background: rgba(8, 8, 8, 0.72);
+    }
+
+    .ohlc-bar span { color: var(--text-lo); }
+    .ohlc-bar b { color: var(--text-hi); font-weight: 500; }
+    .ohlc-bar .up { color: var(--up); }
+    .ohlc-bar .down { color: var(--down); }
+
+    #chart { width: 100%; height: 420px; background: var(--bg-0); }
+    #volume-chart { width: 100%; height: 100px; border-top: 1px solid rgba(200, 205, 211, 0.08); background: var(--bg-0); }
+
+    .banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(135deg, rgba(200, 205, 211, 0.12) 0%, rgba(8, 8, 8, 0.95) 60%),
+        var(--bg-2);
+      border: 1px solid var(--accent-border);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 16px 40px -16px rgba(0, 0, 0, 0.6);
+    }
+
+    .banner strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-hi);
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
+    }
+
+    .banner p {
+      margin: 0;
+      color: var(--text-mid);
+      font-size: 0.9rem;
+      max-width: 50ch;
+      line-height: 1.6;
+    }
+
+    .banner .btn {
+      background: linear-gradient(180deg, var(--accent-hi) 0%, var(--accent) 100%);
+      color: #0a0a0a;
+      border-color: rgba(255, 255, 255, 0.22);
+      flex-shrink: 0;
+    }
+
+    .banner .btn:hover {
+      background: linear-gradient(180deg, #ffffff 0%, #d1d5db 100%);
+      color: #0a0a0a;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      max-height: 280px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+    }
+
+    th, td {
+      padding: 0.5rem 0.85rem;
+      text-align: left;
+      border-bottom: 1px solid var(--line-0);
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      font-family: var(--font-display);
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-hi);
+      font-weight: 600;
+      background: var(--bg-2);
+    }
+
+    td { color: var(--text-mid); }
+    td.num, th:nth-child(n+2) {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+    }
+
+    tbody tr:hover td { background: rgba(255,255,255,0.02); }
+    .muted { color: var(--text-lo); }
+
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--line-0);
+      font-size: 0.75rem;
+      color: var(--text-lo);
+      line-height: 1.8;
+    }
+
+    footer a { color: var(--text-mid); }
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 640px) {
+      #chart { height: 300px; }
+      .topbar { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+      h1 { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-bg" aria-hidden="true"></div>
+
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">GetData<span>· sample</span></div>
+      <nav class="topbar-links">
+        <a href="https://github.com/ork-ad/usdcad-1w-ohlcv-forex-historical-data">GitHub</a>
+        <a href="https://ork.ad/">ork.ad</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="pill-row">
+        <span class="pill sym">USDCAD</span>
+        <span class="pill">1w OHLCV</span>
+        <span class="pill">Forex</span>
+        <span class="pill">Weekly · Sunday</span>
+      </div>
+      <h1>US Dollar / Canadian Dollar</h1>
+      <p class="lead">24/5 FX liquidity with Asian, European and US sessions — not limited to US market hours. Free evaluation sample — <strong>105</strong> candles on GitHub; full archive <strong>104</strong> rows on <a href="https://ork.ad/">ork.ad</a>. Full datasets on ork.ad are updated every Sunday. GitHub samples are refreshed weekly (every Sunday), in sync with ork.ad.</p>
+      <p class="update-badge">Data update every Sunday</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://ork.ad/">Get full dataset on ork.ad</a>
+        <a class="btn btn-ghost" href="https://github.com/ork-ad/usdcad-1w-ohlcv-forex-historical-data/blob/main/USDCAD_1w.csv">Download sample CSV</a>
+      </div>
+    </section>
+
+    <div class="stats">
+      <div class="stat"><label>Sample rows</label><strong>105</strong><small>2024-07-01 → 2026-06-29</small></div>
+      <div class="stat"><label>Full archive</label><strong>104</strong><small>Production dataset</small></div>
+      <div class="stat"><label>Full period</label><strong style="font-size:1rem">2024-07-08</strong><small>→ 2026-06-29</small></div>
+      <div class="stat"><label>Updates</label><strong>Weekly</strong><small>Every Sunday · ork.ad + GitHub</small></div>
+      <div class="stat"><label>Timeframe</label><strong>1 week</strong><small>OHLCV CSV sample</small></div>
+    </div>
+
+    <div class="panel-wrap">
+      <section class="panel" aria-label="OHLC candlestick chart">
+        <div class="panel-head">
+          <div>
+            <h2>USDCAD · candlestick preview</h2>
+            <div class="sub">Last 320 bars from the GitHub sample</div>
+          </div>
+        </div>
+        <div class="ohlc-bar" id="ohlcHover">
+          <span>O <b id="hO">—</b></span>
+          <span>H <b id="hH">—</b></span>
+          <span>L <b id="hL">—</b></span>
+          <span>C <b id="hC">—</b></span>
+          <span>Vol <b id="hV">—</b></span>
+          <span>Time <b id="hT">—</b></span>
+        </div>
+        <div id="chart"></div>
+        <div id="volume-chart"></div>
+      </section>
+    </div>
+
+    <aside class="banner">
+      <div>
+        <strong>Need the complete history?</strong>
+        <p>Download the full USDCAD 1w archive (104 rows) on ork.ad — built for backtesting &amp; algo trading.</p>
+      </div>
+      <a class="btn" href="https://ork.ad/">Open ork.ad →</a>
+    </aside>
+
+    <div class="panel-wrap">
+      <section class="panel">
+        <div class="panel-head"><h2>Sample data</h2><span class="sub">USDCAD_1w.csv</span></div>
+        <div class="table-wrap">
+          <table><thead><tr><th>time</th><th>open</th><th>high</th><th>low</th><th>close</th><th>volume</th></tr></thead><tbody><tr><td>2024-07-01T00:00:00Z</td><td class="num">1.367474</td><td class="num">1.375554</td><td class="num">1.360264</td><td class="num">1.364104</td><td class="num">847380.0</td></tr><tr><td>2024-07-08T00:00:00Z</td><td class="num">1.364104</td><td class="num">1.36531</td><td class="num">1.35841</td><td class="num">1.364764</td><td class="num">981503.0</td></tr><tr><td>2024-07-15T00:00:00Z</td><td class="num">1.364764</td><td class="num">1.374804</td><td class="num">1.363154</td><td class="num">1.370854</td><td class="num">1033437.0</td></tr><tr><td>2024-07-22T00:00:00Z</td><td class="num">1.370854</td><td class="num">1.384914</td><td class="num">1.370764</td><td class="num">1.383084</td><td class="num">1069279.0</td></tr><tr><td>2024-07-29T00:00:00Z</td><td class="num">1.383084</td><td class="num">1.388914</td><td class="num">1.378734</td><td class="num">1.388314</td><td class="num">1262436.0</td></tr><tr><td>2024-08-05T00:00:00Z</td><td class="num">1.388314</td><td class="num">1.394674</td><td class="num">1.371814</td><td class="num">1.373544</td><td class="num">1874161.0</td></tr><tr><td>2024-08-12T00:00:00Z</td><td class="num">1.373544</td><td class="num">1.374804</td><td class="num">1.367104</td><td class="num">1.367904</td><td class="num">970052.0</td></tr><tr><td>2024-08-19T00:00:00Z</td><td class="num">1.367904</td><td class="num">1.368504</td><td class="num">1.349843</td><td class="num">1.350904</td><td class="num">1047988.0</td></tr><tr><td>2024-08-26T00:00:00Z</td><td class="num">1.350904</td><td class="num">1.351414</td><td class="num">1.343643</td><td class="num">1.34911</td><td class="num">1070988.0</td></tr><tr><td>2024-09-02T00:00:00Z</td><td class="num">1.34911</td><td class="num">1.358264</td><td class="num">1.346503</td><td class="num">1.356354</td><td class="num">1053634.0</td></tr><tr><td>2024-09-09T00:00:00Z</td><td class="num">1.356354</td><td class="num">1.362314</td><td class="num">1.354644</td><td class="num">1.357884</td><td class="num">1072457.0</td></tr><tr><td>2024-09-16T00:00:00Z</td><td class="num">1.357884</td><td class="num">1.364714</td><td class="num">1.353264</td><td class="num">1.356544</td><td class="num">1215659.0</td></tr><tr><td>2024-09-23T00:00:00Z</td><td class="num">1.356544</td><td class="num">1.358164</td><td class="num">1.34191</td><td class="num">1.350964</td><td class="num">1161316.0</td></tr><tr><td>2024-09-30T00:00:00Z</td><td class="num">1.350964</td><td class="num">1.359084</td><td class="num">1.347183</td><td class="num">1.358064</td><td class="num">1243170.0</td></tr><tr><td>2024-10-07T00:00:00Z</td><td class="num">1.358064</td><td class="num">1.378474</td><td class="num">1.357184</td><td class="num">1.37821</td><td class="num">961902.0</td></tr></tbody></table>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      GetData · GitHub Pages sample ·
+      Weekly update every Sunday ·
+      <a href="https://ork.ad/">Full data on ork.ad</a> ·
+      Updated 2026-07-04 UTC ·
+      <a href="https://github.com/ork-ad/usdcad-1w-ohlcv-forex-historical-data">Repository</a> ·
+      <a href="https://github.com/ork-ad/usdcad-1w-ohlcv-forex-historical-data/blob/main/USDCAD_1w.csv">Raw CSV</a>
+    </footer>
+  </div>
+
+  <script>
+    const BARS = [{"time":1719792000,"open":1.367474,"high":1.375554,"low":1.360264,"close":1.364104,"volume":847380.0},{"time":1720396800,"open":1.364104,"high":1.36531,"low":1.35841,"close":1.364764,"volume":981503.0},{"time":1721001600,"open":1.364764,"high":1.374804,"low":1.363154,"close":1.370854,"volume":1033437.0},{"time":1721606400,"open":1.370854,"high":1.384914,"low":1.370764,"close":1.383084,"volume":1069279.0},{"time":1722211200,"open":1.383084,"high":1.388914,"low":1.378734,"close":1.388314,"volume":1262436.0},{"time":1722816000,"open":1.388314,"high":1.394674,"low":1.371814,"close":1.373544,"volume":1874161.0},{"time":1723420800,"open":1.373544,"high":1.374804,"low":1.367104,"close":1.367904,"volume":970052.0},{"time":1724025600,"open":1.367904,"high":1.368504,"low":1.349843,"close":1.350904,"volume":1047988.0},{"time":1724630400,"open":1.350904,"high":1.351414,"low":1.343643,"close":1.34911,"volume":1070988.0},{"time":1725235200,"open":1.34911,"high":1.358264,"low":1.346503,"close":1.356354,"volume":1053634.0},{"time":1725840000,"open":1.356354,"high":1.362314,"low":1.354644,"close":1.357884,"volume":1072457.0},{"time":1726444800,"open":1.357884,"high":1.364714,"low":1.353264,"close":1.356544,"volume":1215659.0},{"time":1727049600,"open":1.356544,"high":1.358164,"low":1.34191,"close":1.350964,"volume":1161316.0},{"time":1727654400,"open":1.350964,"high":1.359084,"low":1.347183,"close":1.358064,"volume":1243170.0},{"time":1728259200,"open":1.358064,"high":1.378474,"low":1.357184,"close":1.37821,"volume":961902.0},{"time":1728864000,"open":1.37821,"high":1.383834,"low":1.37451,"close":1.379964,"volume":847967.0},{"time":1729468800,"open":1.379964,"high":1.389774,"low":1.379914,"close":1.389564,"volume":935200.0},{"time":1730073600,"open":1.389564,"high":1.395854,"low":1.38761,"close":1.392074,"volume":963083.0},{"time":1730678400,"open":1.392074,"high":1.395864,"low":1.381744,"close":1.391004,"volume":1147671.0},{"time":1731283200,"open":1.391004,"high":1.41051,"low":1.390454,"close":1.408574,"volume":1035961.0},{"time":1731888000,"open":1.408574,"high":1.410214,"low":1.393074,"close":1.393314,"volume":1016946.0},{"time":1732492800,"open":1.393314,"high":1.417744,"low":1.392714,"close":1.401354,"volume":1077052.0},{"time":1733097600,"open":1.401354,"high":1.416444,"low":1.4008780171400852,"close":1.414764,"volume":964764.0},{"time":1733702400,"open":1.414764,"high":1.424484,"low":1.409284,"close":1.422564,"volume":943839.0},{"time":1734307200,"open":1.422564,"high":1.446664,"low":1.421634,"close":1.435984,"volume":1033754.0},{"time":1734912000,"open":1.435984,"high":1.44491,"low":1.434834,"close":1.440234,"volume":575642.0},{"time":1735516800,"open":1.440234,"high":1.446314,"low":1.433744,"close":1.443834,"volume":691109.0},{"time":1736121600,"open":1.443834,"high":1.444454,"low":1.427904,"close":1.441474,"volume":1062512.0},{"time":1736726400,"open":1.441474,"high":1.448534,"low":1.430154,"close":1.446974,"volume":1110212.0},{"time":1737331200,"open":1.446974,"high":1.45161,"low":1.426044,"close":1.438574,"volume":1318200.0},{"time":1737936000,"open":1.438574,"high":1.475195,"low":1.433294,"close":1.471255,"volume":1475429.0},{"time":1738540800,"open":1.471255,"high":1.479285,"low":1.426934,"close":1.433254,"volume":1584603.0},{"time":1739145600,"open":1.433254,"high":1.435864,"low":1.415034,"close":1.418084,"volume":1117448.0},{"time":1739750400,"open":1.418084,"high":1.424514,"low":1.415894,"close":1.421044,"volume":978323.0},{"time":1740355200,"open":1.421044,"high":1.447054,"low":1.418144,"close":1.444314,"volume":1395144.0},{"time":1740960000,"open":1.444314,"high":1.454265,"low":1.423744,"close":1.437304,"volume":1897603.0},{"time":1741564800,"open":1.437304,"high":1.452085,"low":1.435254,"close":1.43731,"volume":1483708.0},{"time":1742169600,"open":1.43731,"high":1.440094,"low":1.425914,"close":1.433294,"volume":985431.0},{"time":1742774400,"open":1.433294,"high":1.435014,"low":1.423464,"close":1.430934,"volume":986896.0},{"time":1743379200,"open":1.430934,"high":1.441474,"low":1.402504,"close":1.42421,"volume":2121002.0},{"time":1743984000,"open":1.42421,"high":1.429564,"low":1.383844,"close":1.387434,"volume":3513395.0},{"time":1744588800,"open":1.387434,"high":1.397704,"low":1.38211,"close":1.382474,"volume":1673588.0},{"time":1745193600,"open":1.382474,"high":1.390414,"low":1.378044,"close":1.387044,"volume":1072601.0},{"time":1745798400,"open":1.387044,"high":1.389234,"low":1.375954,"close":1.38241,"volume":916720.0},{"time":1746403200,"open":1.38241,"high":1.394404,"low":1.374994,"close":1.392714,"volume":894971.0},{"time":1747008000,"open":1.392714,"high":1.401594,"low":1.390094,"close":1.395204,"volume":880500.0},{"time":1747612800,"open":1.395204,"high":1.397244,"low":1.370884,"close":1.373584,"volume":1008707.0},{"time":1748217600,"open":1.373584,"high":1.386114,"low":1.368554,"close":1.372414,"volume":846986.0},{"time":1748822400,"open":1.372414,"high":1.374254,"low":1.363404,"close":1.369174,"volume":857951.0},{"time":1749427200,"open":1.369174,"high":1.372814,"low":1.356564,"close":1.358214,"volume":951331.0},{"time":1750032000,"open":1.358214,"high":1.375674,"low":1.353914,"close":1.374084,"volume":1006154.0},{"time":1750636800,"open":1.374084,"high":1.379744,"low":1.361704,"close":1.368164,"volume":1041041.0},{"time":1751241600,"open":1.368164,"high":1.369954,"low":1.355664,"close":1.360354,"volume":1023744.0},{"time":1751846400,"open":1.360354,"high":1.373114,"low":1.359734,"close":1.368704,"volume":932287.0},{"time":1752451200,"open":1.368704,"high":1.377454,"low":1.366994,"close":1.372364,"volume":852342.0},{"time":1753056000,"open":1.372364,"high":1.373494,"low":1.357554,"close":1.370314,"volume":838108.0},{"time":1753660800,"open":1.370314,"high":1.387954,"low":1.368874,"close":1.37781,"volume":1141677.0},{"time":1754265600,"open":1.37781,"high":1.381054,"low":1.37211,"close":1.375354,"volume":881716.0},{"time":1754870400,"open":1.375354,"high":1.381974,"low":1.374464,"close":1.38151,"volume":782246.0},{"time":1755475200,"open":1.38151,"high":1.392494,"low":1.37831,"close":1.382984,"volume":700253.0},{"time":1756080000,"open":1.382984,"high":1.38681,"low":1.372664,"close":1.37391,"volume":740161.0},{"time":1756684800,"open":1.37391,"high":1.385454,"low":1.373294,"close":1.383564,"volume":812374.0},{"time":1757289600,"open":1.383564,"high":1.389244,"low":1.37881,"close":1.383964,"volume":764567.0},{"time":1757894400,"open":1.383964,"high":1.384604,"low":1.372664,"close":1.378264,"volume":850794.0},{"time":1758499200,"open":1.378264,"high":1.395894,"low":1.378204,"close":1.393834,"volume":843856.0},{"time":1759104000,"open":1.393834,"high":1.398644,"low":1.389654,"close":1.396474,"volume":788787.0},{"time":1759708800,"open":1.396474,"high":1.403434,"low":1.393184,"close":1.399904,"volume":832688.0},{"time":1760313600,"open":1.399904,"high":1.408014,"low":1.398294,"close":1.40161,"volume":983922.0},{"time":1760918400,"open":1.40161,"high":1.406604,"low":1.397284,"close":1.399454,"volume":746778.0},{"time":1761523200,"open":1.399454,"high":1.403574,"low":1.388804,"close":1.401584,"volume":876566.0},{"time":1762128000,"open":1.401584,"high":1.414074,"low":1.400874,"close":1.404454,"volume":773426.0},{"time":1762732800,"open":1.404454,"high":1.404654,"low":1.398544,"close":1.401874,"volume":887633.0},{"time":1763337600,"open":1.401874,"high":1.413104,"low":1.397144,"close":1.409574,"volume":992925.0},{"time":1763942400,"open":1.409574,"high":1.412514,"low":1.393844,"close":1.397074,"volume":1205926.0},{"time":1764547200,"open":1.397074,"high":1.401474,"low":1.381314,"close":1.383514,"volume":829218.0},{"time":1765152000,"open":1.383514,"high":1.387194,"low":1.375364,"close":1.376834,"volume":849975.0},{"time":1765756800,"open":1.376834,"high":1.380584,"low":1.373,"close":1.379134,"volume":841811.0},{"time":1766361600,"open":1.379134,"high":1.380104,"low":1.364254,"close":1.366864,"volume":515158.0},{"time":1766966400,"open":1.366864,"high":1.374804,"low":1.365764,"close":1.374734,"volume":739948.0},{"time":1767571200,"open":1.374734,"high":1.391984,"low":1.374154,"close":1.391254,"volume":809252.0},{"time":1768176000,"open":1.391254,"high":1.392894,"low":1.385464,"close":1.390074,"volume":764633.0},{"time":1768780800,"open":1.390074,"high":1.390794,"low":1.368854,"close":1.370094,"volume":902436.0},{"time":1769385600,"open":1.370094,"high":1.373944,"low":1.348153,"close":1.363854,"volume":1349469.0},{"time":1769990400,"open":1.363854,"high":1.372474,"low":1.361344,"close":1.365864,"volume":1004947.0},{"time":1770595200,"open":1.365864,"high":1.366734,"low":1.35041,"close":1.361744,"volume":766980.0},{"time":1771200000,"open":1.361744,"high":1.371504,"low":1.360334,"close":1.364944,"volume":629040.0},{"time":1771804800,"open":1.364944,"high":1.372504,"low":1.362514,"close":1.366914,"volume":775786.0},{"time":1772409600,"open":1.366914,"high":1.375314,"low":1.355284,"close":1.36011,"volume":1653514.0},{"time":1773014400,"open":1.36011,"high":1.374174,"low":1.352554,"close":1.371284,"volume":1298970.0},{"time":1773619200,"open":1.371284,"high":1.374814,"low":1.365314,"close":1.370974,"volume":1044793.0},{"time":1774224000,"open":1.370974,"high":1.390334,"low":1.367014,"close":1.390004,"volume":1112383.0},{"time":1774828800,"open":1.390004,"high":1.396704,"low":1.386784,"close":1.394584,"volume":781691.0},{"time":1775433600,"open":1.394584,"high":1.394774,"low":1.379944,"close":1.387314,"volume":817170.0},{"time":1776038400,"open":1.387314,"high":1.387694,"low":1.364944,"close":1.37061,"volume":739094.0},{"time":1776643200,"open":1.37061,"high":1.371464,"low":1.36311,"close":1.36781,"volume":738038.0},{"time":1777248000,"open":1.36781,"high":1.371084,"low":1.355004,"close":1.358834,"volume":788291.0},{"time":1777852800,"open":1.358834,"high":1.371044,"low":1.357814,"close":1.368354,"volume":771781.0},{"time":1778457600,"open":1.368354,"high":1.3767375343376709,"low":1.36481,"close":1.376254,"volume":743882.0},{"time":1779062400,"open":1.376254,"high":1.382354,"low":1.373144,"close":1.380284,"volume":826473.0},{"time":1779667200,"open":1.380284,"high":1.387007739738698,"low":1.377054,"close":1.379744,"volume":863404.0},{"time":1780272000,"open":1.379744,"high":1.395154,"low":1.379714,"close":1.394444,"volume":489538.0},{"time":1780876800,"open":1.394444,"high":1.402314,"low":1.38981,"close":1.396334,"volume":1177597.0},{"time":1781481600,"open":1.396334,"high":1.418254,"low":1.394974,"close":1.417394,"volume":920807.0},{"time":1782086400,"open":1.417394,"high":1.424764,"low":1.414404,"close":1.41893,"volume":946406.0},{"time":1782691200,"open":1.41893,"high":1.42467,"low":1.41489,"close":1.41812,"volume":730148.0}];
+
+    const CHART = {
+      layoutBgTop: '#181b22',
+      layoutBgBottom: '#000000',
+      textColor: 'rgba(255, 255, 255, 0.7)',
+      gridVert: 'rgba(255, 255, 255, 0.02)',
+      gridHorz: 'rgba(255, 255, 255, 0.03)',
+      scaleBorder: 'rgba(255, 255, 255, 0.08)',
+      upColor: '#00c853',
+      downColor: '#ff1744',
+      volUp: 'rgba(0, 200, 83, 0.35)',
+      volDown: 'rgba(255, 23, 68, 0.35)',
+    };
+
+    const fmt = (n, d=5) => (n == null || isNaN(n)) ? '—' : Number(n).toFixed(d);
+    const fmtVol = (n) => (n == null || isNaN(n)) ? '—' : Number(n).toLocaleString(undefined, {maximumFractionDigits: 0});
+
+    function initChart(containerId, height, opts) {
+      const el = document.getElementById(containerId);
+      const chart = LightweightCharts.createChart(el, {
+        width: el.clientWidth,
+        height,
+        layout: {
+          background: {
+            type: LightweightCharts.ColorType.VerticalGradient,
+            topColor: CHART.layoutBgTop,
+            bottomColor: CHART.layoutBgBottom,
+          },
+          textColor: CHART.textColor,
+          fontFamily: "'Clash Display', -apple-system, sans-serif",
+          attributionLogo: false,
+        },
+        grid: { vertLines: { color: CHART.gridVert }, horzLines: { color: CHART.gridHorz } },
+        rightPriceScale: { borderColor: CHART.scaleBorder, textColor: CHART.textColor },
+        leftPriceScale: { textColor: CHART.textColor },
+        timeScale: { borderColor: CHART.scaleBorder, timeVisible: true, secondsVisible: false, textColor: CHART.textColor },
+        crosshair: { mode: LightweightCharts.CrosshairMode.Normal, vertLine: { color: 'rgba(255,255,255,0.25)' }, horzLine: { color: 'rgba(255,255,255,0.25)' } },
+        ...opts,
+      });
+      const ro = new ResizeObserver(() => chart.applyOptions({ width: el.clientWidth }));
+      ro.observe(el);
+      return chart;
+    }
+
+    const mainChart = initChart('chart', 420);
+    const candles = mainChart.addCandlestickSeries({
+      upColor: CHART.upColor,
+      downColor: CHART.downColor,
+      borderUpColor: CHART.upColor,
+      borderDownColor: CHART.downColor,
+      wickUpColor: CHART.upColor,
+      wickDownColor: CHART.downColor,
+    });
+    candles.setData(BARS.map(b => ({
+      time: b.time, open: b.open, high: b.high, low: b.low, close: b.close,
+    })));
+
+    const volChart = initChart('volume-chart', 100, {
+      timeScale: { visible: false, textColor: CHART.textColor },
+      rightPriceScale: { scaleMargins: { top: 0.1, bottom: 0 }, textColor: CHART.textColor },
+    });
+    const volume = volChart.addHistogramSeries({
+      priceFormat: { type: 'volume' },
+      priceScaleId: 'right',
+    });
+    volume.setData(BARS.map(b => ({
+      time: b.time,
+      value: b.volume,
+      color: b.close >= b.open ? CHART.volUp : CHART.volDown,
+    })));
+
+    mainChart.timeScale().subscribeVisibleLogicalRangeChange(range => {
+      if (range) volChart.timeScale().setVisibleLogicalRange(range);
+    });
+    volChart.timeScale().subscribeVisibleLogicalRangeChange(range => {
+      if (range) mainChart.timeScale().setVisibleLogicalRange(range);
+    });
+
+    function setHover(bar) {
+      const o = document.getElementById('hO');
+      const h = document.getElementById('hH');
+      const l = document.getElementById('hL');
+      const c = document.getElementById('hC');
+      const v = document.getElementById('hV');
+      const t = document.getElementById('hT');
+      const data = bar || (BARS.length ? BARS[BARS.length - 1] : null);
+      if (!data) {
+        [o, h, l, c, v, t].forEach(el => el.textContent = '—');
+        c.className = '';
+        return;
+      }
+      const raw = BARS.find(b => b.time === data.time) || data;
+      o.textContent = fmt(data.open);
+      h.textContent = fmt(data.high);
+      l.textContent = fmt(data.low);
+      c.textContent = fmt(data.close);
+      c.className = data.close >= data.open ? 'up' : 'down';
+      v.textContent = fmtVol(raw.volume);
+      const d = new Date(data.time * 1000);
+      t.textContent = d.toISOString().slice(0, 16).replace('T', ' ');
+    }
+
+    mainChart.subscribeCrosshairMove(param => {
+      if (!param.time) {
+        setHover(null);
+        return;
+      }
+      const bar = param.seriesData.get(candles);
+      setHover(bar || null);
+    });
+
+    setHover(null);
+
+    mainChart.timeScale().fitContent();
+    volChart.timeScale().fitContent();
+  </script>
+</body>
+</html>
